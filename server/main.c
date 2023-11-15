@@ -9,6 +9,7 @@
 
 static void rootfn(struct http_request *req, struct http_response *res);
 static void loginfn(struct http_request *req, struct http_response *res);
+static void html(struct http_request *req, struct http_response *res);
 
 int
 main(void)
@@ -22,10 +23,12 @@ main(void)
         void (*funcs[])(struct http_request *, struct http_response *) = {
                 rootfn,
                 loginfn,
+                html,
         };
         char *funcnames[] = {
                 "/",
                 "/login",
+                "/html",
                 NULL
         };
         size_t i;
@@ -92,6 +95,21 @@ loginfn(struct http_request *req, struct http_response *res)
                      "Content-Length: 6\r\n"
                      "Content-Type: text/plain\r\n"
                      "\r\nlogin\n";
+
+        for (p = buf; *p; ++p)
+                iobuf_putc(req->rq_buf, *p);
+
+        iobuf_flush_out(req->rq_buf);
+}
+
+static void
+html(struct http_request *req, struct http_response *res)
+{
+        char *p;
+        char buf[] = "HTTP/1.1 200 OK\r\n"
+                     "Content-Length: 22\r\n"
+                     "Content-Type: text/html\r\n"
+                     "\r\n<h1>Hello, World!</h1>";
 
         for (p = buf; *p; ++p)
                 iobuf_putc(req->rq_buf, *p);
