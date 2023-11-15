@@ -1,5 +1,8 @@
 #include "http.h"
 #include <stdio.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 struct http_server *
 http_server_new(struct addrinfo *ap)
@@ -50,10 +53,20 @@ http_server_add_handler(struct http_server *hp,
 }
 
 static void http_server_client(struct http_server *hp, int connfd);
+static void sigchld_handler(int signo);
 
 void
 http_server_listen(struct http_server *hp, int qsize)
 {
+        struct sigaction act;
+
+        memset(&act, 0, sizeof(act));
+        act.sa_handler = sigchld_handler;
+        act.sa_flags = 0;
+        sigemptyset(&act.sa_mask);
+        if (sigaction(SIGCHLD, &act, NULL))
+                err(EX_OSERR, "sigaction()");
+
         if (listen(hp->sv_fd, qsize))
                 err(EX_OSERR, "http_server_listen");
 
@@ -80,6 +93,15 @@ http_server_listen(struct http_server *hp, int qsize)
                 if (close(connfd))
                         err(EX_OSERR, "http_server_listen");
         }
+}
+
+static void
+sigchld_handler(int signo)
+{
+        pid_t pid;
+
+        while ((pid = waitpid(-1, NULL, WNOHANG)) > 0)
+                ;
 }
 
 static struct http_request *http_request_new(int connfd);
