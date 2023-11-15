@@ -1,10 +1,9 @@
 #ifndef STRING_H
 #define STRING_H
 
-#include <err.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sysexits.h>
 
 /* dynamic string */
 struct string {
@@ -37,7 +36,7 @@ extern struct string *string_new(size_t cap);
  *      @success:       0
  *      @failure:       -1 and errno set
  */
-extern void string_append(struct string *sp, char c);
+extern int string_append(struct string *sp, char c);
 
 /**
  * Free a string:
@@ -48,6 +47,6 @@ extern void string_append(struct string *sp, char c);
  *      @success:       0 and *spp set to NULL
  *      @failure:       -1 and errno set
  */
-extern void string_free(struct string **spp);
+extern int string_free(struct string **spp);
 
 #endif

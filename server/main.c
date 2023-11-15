@@ -61,8 +61,11 @@ main(void)
                 http_server_add_handler(server, funcnames[i], hdlr);
         }
 
-        http_server_listen(server, 10);
-        http_server_free(server);
+        if (http_server_listen(server, 10) < 0)
+                err(EX_SOFTWARE, "http_server_listen()");
+
+        if (http_server_free(&server) < 0)
+                err(EX_SOFTWARE, "http_server_free()");
 }
 
 static void
@@ -84,4 +87,14 @@ rootfn(struct http_request *req, struct http_response *res)
 static void
 loginfn(struct http_request *req, struct http_response *res)
 {
+        char *p;
+        char buf[] = "HTTP/1.1 200 OK\r\n"
+                     "Content-Length: 6\r\n"
+                     "Content-Type: text/plain\r\n"
+                     "\r\nlogin\n";
+
+        for (p = buf; *p; ++p)
+                iobuf_putc(req->rq_buf, *p);
+
+        iobuf_flush_out(req->rq_buf);
 }

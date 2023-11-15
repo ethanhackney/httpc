@@ -65,10 +65,13 @@ extern struct http_server *http_server_new(struct addrinfo *ap);
  *      @hp:            pointer to http_server
  *      @resource:      resource this handler is handling
  *      @fn:            function to call when resource is requested
+ * ret:
+ *      @success:       0
+ *      @failure:       -1 and errno set
  */
-extern void http_server_add_handler(struct http_server *hp,
-                                    char *resource,
-                                    struct http_handler *handler);
+extern int http_server_add_handler(struct http_server *hp,
+                                   char *resource,
+                                   struct http_handler *handler);
 
 /**
  * Listen on http_server:
@@ -80,8 +83,17 @@ extern void http_server_add_handler(struct http_server *hp,
  *      @success:       0
  *      @failure:       -1 and errno set
  */
-extern void http_server_listen(struct http_server *hp, int qsize);
+extern int http_server_listen(struct http_server *hp, int qsize);
 
-extern void http_server_free(struct http_server *hp);
+/**
+ * Free an http_server:
+ *
+ * args:
+ *      @hpp:   pointer to pointer to http_server
+ * ret:
+ *      @success:       0
+ *      @failure:       -1 and errno set
+ */
+extern int http_server_free(struct http_server **hpp);
 
 #endif

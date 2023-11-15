@@ -1,9 +1,8 @@
 #ifndef IOBUF_H
 #define IOBUF_H
 
-#include <err.h>
+#include <errno.h>
 #include <stdlib.h>
-#include <sysexits.h>
 #include <unistd.h>
 
 /* I/O buffer */
@@ -30,6 +29,9 @@ struct iobuf {
  * args:
  *      @fd:    file descriptor to read/write to
  *      @size:  size (or zero for default)
+ * ret:
+ *      @success:       pointer to iobuf
+ *      @failure:       NULL and errno set
  */
 extern struct iobuf *iobuf_new(int fd, size_t size);
 
@@ -50,23 +52,32 @@ extern int iobuf_getc(struct iobuf *ip);
  * args:
  *      @ip:    pointer to iobuf
  *      @c:     character to write
+ * ret:
+ *      @success:       0
+ *      @failure:       -1 and errno set
  */
-extern void iobuf_putc(struct iobuf *ip, char c);
+extern int iobuf_putc(struct iobuf *ip, char c);
 
 /**
  * Free an iobuf:
  *
  * args:
  *      @ipp:   pointer to pointer to iobuf
+ * ret:
+ *      @success:       0
+ *      @failure:       -1 and errno set
  */
-extern void iobuf_free(struct iobuf **ipp);
+extern int iobuf_free(struct iobuf **ipp);
 
 /**
  * Flush output buffer:
  *
  * args:
  *      @ip:    pointer to iobuf
+ * ret:
+ *      @success:       0
+ *      @failure:       -1 and errno set
  */
-extern void iobuf_flush_out(struct iobuf *ip);
+extern int iobuf_flush_out(struct iobuf *ip);
 
 #endif

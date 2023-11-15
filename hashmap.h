@@ -1,11 +1,10 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-#include <err.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sysexits.h>
 
 /* user facing portion on hashmap entry */
 struct hash_entry {
@@ -51,8 +50,11 @@ extern struct hashmap *hashmap_new(size_t size);
  *
  * args:
  *      @hpp:   pointer to pointer to hashmap
+ * ret:
+ *      @success:       0 and *hpp set to NULL
+ *      @failure:       -1 and errno set
  */
-extern void hashmap_free(struct hashmap **hpp);
+extern int hashmap_free(struct hashmap **hpp);
 
 /**
  * Retrieve an entry from hashmap:
@@ -62,7 +64,7 @@ extern void hashmap_free(struct hashmap **hpp);
  *      @key:   key to search for
  * ret:
  *      @success:       pointer to hash_entry
- *      @failure:       NULL
+ *      @failure:       NULL and errno possibly set
  */
 extern struct hash_entry *hashmap_get(struct hashmap *hp, char *key);
 
@@ -73,6 +75,9 @@ extern struct hash_entry *hashmap_get(struct hashmap *hp, char *key);
  *      @hp:    pointer to hashmap
  *      @key:   key
  *      @value: value
+ * ret:
+ *      @success:       pointer to hash_entry
+ *      @failure:       NULL and errno possibly set
  */
 extern struct hash_entry *hashmap_set(struct hashmap *hp, char *key, void *value);
 
@@ -86,6 +91,6 @@ extern struct hash_entry *hashmap_set(struct hashmap *hp, char *key, void *value
  *      @success:       0
  *      @failure:       -1 and errno set
  */
-extern void hashmap_for(struct hashmap *hp, void (*fn)(struct hash_entry *));
+extern int hashmap_for(struct hashmap *hp, void (*fn)(struct hash_entry *));
 
 #endif
