@@ -65,7 +65,7 @@ static int hashmap_sanity(const struct hashmap *hp);
 int
 hashmap_free(struct hashmap **hpp)
 {
-        struct hashmap  *hp = *hpp;
+        struct hashmap  *hp = NULL;
         size_t          freed;
         size_t          i;
 
