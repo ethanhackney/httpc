@@ -1,0 +1,16 @@
+[ client ] ------> connect() <------ [ master process ]
+   ^                                        |
+   |                                        V
+   |                                     fork()
+   |                                        |
+   |                                        V
+   +----------------------------------->[ child ]
+                                            |
+                                            V
+                                      [ http parser ]
+                                            |
+                                            V
+                                    [ handlers[req->resource](req, res) ]
+                                           |
+                                           V
+                                    [ rest is done in user provided handler ]
